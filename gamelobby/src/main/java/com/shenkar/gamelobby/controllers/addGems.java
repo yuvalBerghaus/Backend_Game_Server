@@ -47,17 +47,15 @@ public class addGems extends HttpServlet {
 			{
 				String uid = _parsedJson.get("UserId").toString();
 				String gems_recieved = _parsedJson.get("Gems").toString();
-				if(GlobalVariables.users.containsKey(uid)) {
-					Map<String, Object> user = GlobalVariables.users.get(uid);
-					String gems = user.get("Gems").toString();
+				Map<String,String> _loginData = RedisApi.GetUserData(_parsedJson.get("UserId").toString());
+				if(_loginData.get("UserId").toString().equals(_parsedJson.get("UserId").toString())) {
+					String gems = _loginData.get("Gems").toString();
 					Double _current_amount_gems = Double.valueOf(gems);
 					Double _current_gems_recieved = Double.valueOf(gems_recieved);
 					_current_amount_gems += _current_gems_recieved;
-					user.put("Gems", _current_amount_gems.toString());
-					Map<String,String> converted_map;
-					converted_map = GlobalFunctions.parseAllToMapString(user);
-					RedisApi.SetUserData(user.get("PhoneNumber").toString(), converted_map);
-					_ret.put("Response", "CodeValidation");
+					_loginData.put("Gems", _current_amount_gems.toString());
+					RedisApi.SetUserData(_loginData.get("UserId").toString(), _loginData);
+					_ret.put("Response", "AddGems");
 					_ret.put("IsCreated", true);
 					_ret.put("Gems", _current_amount_gems.toString());
 				}

@@ -47,17 +47,18 @@ public class codeRegisterValidation extends HttpServlet {
 			{
 				Map<String,String> _userData = new LinkedHashMap<String, String>();
 				Map<String,String> _uid_data = new LinkedHashMap<String, String>();
+				Map<String,String> _loginData = RedisApi.GetUserData(_parsedJson.get("Code").toString());
 				//if(GlobalVariables.users.containsKey(_email))
-				if(GlobalVariables.current_user.containsKey("PhoneNumber") && GlobalVariables.current_user.containsKey("Code"))
+				if(_loginData.containsKey("PhoneNumber") && _loginData.containsKey("Code"))
 				{
-					if(_parsedJson.get("Code").equals(_parsedJson.get("Code"))) {
+					if(_loginData.get("Code").equals(_parsedJson.get("Code"))) {
 						String uid = GlobalFunctions.CreateUserUUID();
 						String NickName = GlobalFunctions.randomName();
 						 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
 						 OffsetDateTime now = OffsetDateTime.now(); 
 						String current_date = dtf.format(now);
-						_userData.put("PhoneNumber", GlobalVariables.current_user.get("PhoneNumber"));
-						_userData.put("Code", GlobalVariables.current_user.get("Code"));
+						_userData.put("PhoneNumber", _loginData.get("PhoneNumber"));
+						_userData.put("Code", _loginData.get("Code"));
 						_userData.put("CreatedTime", GlobalFunctions.GetUTCDate());
 						_userData.put("UserId", uid);
 						_userData.put("NickName", NickName);
@@ -70,7 +71,7 @@ public class codeRegisterValidation extends HttpServlet {
 						_ret.put("UserId", _userData.get("UserId"));	
 						_userData.put("sequence_day", "0");
 						_userData.put("Date", current_date);
-						RedisApi.SetUserData(GlobalVariables.current_user.get("PhoneNumber"),_userData);
+						RedisApi.SetUserData(uid,_userData);
 					}
 					else 
 					{

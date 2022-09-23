@@ -38,6 +38,7 @@ public class registerControl extends HttpServlet {
 		try
 		{
 			String _message = request.getParameter("Data");
+			
 			Map<String, Object> _parsedJson = GlobalFunctions.DeserializeJson(_message);
 			if(_parsedJson.containsKey("PhoneNumber")) 
 			{
@@ -46,12 +47,14 @@ public class registerControl extends HttpServlet {
 				System.out.println("Success");
 				String phone_number = _parsedJson.get("PhoneNumber").toString();
 				Map<String,String> _loginData = RedisApi.GetUserData(phone_number);
-			
 				//if(GlobalVariables.users.containsKey(_email) == false)
 				if(_loginData.containsKey("PhoneNumber") == false)
 				{
 					GlobalVariables.current_user.put("Code", gen_code);
 					GlobalVariables.current_user.put("PhoneNumber", phone_number);
+					_loginData.put("Code", gen_code);
+					_loginData.put("PhoneNumber", phone_number);
+					RedisApi.SetUserData(gen_code, _loginData);
 				}
 				else if(_loginData.containsKey("PhoneNumber") && _loginData.containsKey("Code") && _parsedJson.containsKey("Code"))
 				{
