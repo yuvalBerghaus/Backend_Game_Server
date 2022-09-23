@@ -10,7 +10,7 @@ import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
 
 public class MatchingService {
 	private Integer roomIdCounter = 10000;
-	public String match_room(LinkedHashMap<String,Object> _Data) {
+	public static String match_room(Map<String,Object> _Data) {
 		Map<String,Object> _ret = new LinkedHashMap<String,Object>();
 		String _ws = "ws://localhost:8168/gameserver/game/";
 		if(GlobalVariables.curEnviroment == Enviroment.Development)
@@ -21,7 +21,7 @@ public class MatchingService {
 		//_Data will contain the user's details and we will first look if exists any room from redis
 		Map<String,String> all_rooms = RedisApi.GetOpenRooms();
 		String uid = _Data.get("UserId").toString();
-		if(all_rooms == null) {
+		if(all_rooms.isEmpty()) {
 			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 			searchDataRoom.put("status", "waiting");
 			searchDataRoom.put("Uid1", uid);

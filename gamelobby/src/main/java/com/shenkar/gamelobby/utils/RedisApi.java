@@ -48,7 +48,7 @@ public class RedisApi
 		all_rooms.put(room_id, status);
 		RedisLogic.RedisSetMap("/Rooms",all_rooms);
 		Map<String,String>search_data = GetSearchData(room_id);
-		search_data.put(room_id, status);
+		search_data.put("status", status);
 		SetSearchData(room_id,search_data);
 	}
 }

@@ -39,8 +39,7 @@ public class searchingController extends HttpServlet {
 				String _userId = _parsedJson.get("UserId").toString();
 				if(_userId.equals("") == false)
 				{
-					/* MatchingService. */
-					// Insert a waiting opponent
+					MatchingService.match_room(_parsedJson);
 					System.out.println("Hola como estas?");
 				}
 				else
