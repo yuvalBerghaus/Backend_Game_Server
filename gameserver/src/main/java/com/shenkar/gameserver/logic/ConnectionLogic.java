@@ -1,6 +1,7 @@
 package com.shenkar.gameserver.logic;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,11 +42,12 @@ public class ConnectionLogic
 			Map<String, Object> _details = GlobalFunctions.DeserializeJson("{" + _Details + "}");
 			if(_details != null && _details.containsKey("UserId"))
 			{
-				MatchingServ.match_room(_details);
+				String wtf = MatchingServ.getInstance().match_room(_details);
 				connectedUsers.put(_Session.getId(), _Session);
 				String _userId = _details.get("UserId").toString();
-				
+				System.out.println(wtf);
 				//Delete old mapping to old session for the user id
+				
 				LoggedUsersLogic.getInstance().removeUserSessionUserId(_userId);
 				
 				//Add a new mapping: session to userid

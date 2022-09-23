@@ -3,11 +3,19 @@ package com.shenkar.gameserver.models;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.shenkar.gameserver.logic.LoggedUsersLogic;
 import com.shenkar.gameserver.utils.RedisApi;
 
 public class MatchingServ {
 	private Integer roomIdCounter = 10000;
-	public static String match_room(Map<String,Object> _Data) {
+	private static MatchingServ instance;
+	public static MatchingServ getInstance()
+	{
+		if(instance == null)
+			instance = new MatchingServ();
+		return instance;
+	}
+	public String match_room(Map<String,Object> _Data) {
 		//retrieve all possible rooms compare if there is already a userid with a room
 		//_Data will contain the user's details and we will first look if exists any room from redis
 		Map<String,String> all_rooms = RedisApi.GetOpenRooms();
