@@ -43,4 +43,12 @@ public class RedisApi
 		all_rooms.put(newRoom, "waiting");
 		RedisLogic.RedisSetMap("/Rooms",all_rooms);
 	}
+	public static void updateRoomStatus(String room_id,String status) {
+		Map<String,String> all_rooms = GetOpenRooms();
+		all_rooms.put(room_id, status);
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+		Map<String,String>search_data = GetSearchData(room_id);
+		search_data.put(room_id, status);
+		SetSearchData(room_id,search_data);
+	}
 }

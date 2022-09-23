@@ -10,7 +10,7 @@ import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
 
 public class MatchingService {
 	private Integer roomIdCounter = 10000;
-	public Map<String,Object> getRoomDetails(LinkedHashMap<String,Object> _Data) {
+	public String match_room(LinkedHashMap<String,Object> _Data) {
 		Map<String,Object> _ret = new LinkedHashMap<String,Object>();
 		String _ws = "ws://localhost:8168/gameserver/game/";
 		if(GlobalVariables.curEnviroment == Enviroment.Development)
@@ -32,12 +32,13 @@ public class MatchingService {
 			Boolean found_opponent = false;
 			for(String room_key : all_rooms.keySet()) {
 				if(all_rooms.get(room_key).equals("waiting")) {
-					all_rooms.put(room_key, "busy");
+					RedisApi.updateRoomStatus(room_key, "busy");
 					found_opponent = true;
 					Map<String,String> found_room = RedisApi.GetSearchData(room_key);
 					found_room.put("uid2", uid);
 					//now we need to update in both reshumot
-					break;
+					RedisApi.SetSearchData(room_key, found_room);
+					return room_key;
 				}
 			}
 			//if player did not find an opponent we must create the room
@@ -45,13 +46,14 @@ public class MatchingService {
 				Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 				searchDataRoom.put("status", "waiting");
 				searchDataRoom.put("Uid1", _Data.get("UserId").toString());
+				RedisApi.addRooms(uid);
 			}
 		}
-		
-		else {
-			Map<String,String> _searchData = new LinkedHashMap<String, String>();
-			_searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
-			RedisApi.SetSearchData(_Data.get("UserId").toString(), _searchData);	
-		}
+		return uid;
+		/*
+		 * else { Map<String,String> _searchData = new LinkedHashMap<String, String>();
+		 * _searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
+		 * RedisApi.SetSearchData(_Data.get("UserId").toString(), _searchData); }
+		 */
 	}
 }
