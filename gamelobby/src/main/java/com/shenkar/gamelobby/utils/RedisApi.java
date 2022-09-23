@@ -1,5 +1,6 @@
 package com.shenkar.gamelobby.utils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RedisApi 
@@ -12,7 +13,11 @@ public class RedisApi
 	
 
 	public static void SetSearchData(String _UserId,Map<String,String> _SearchData)
-	{RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);}
+	{
+		RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);
+		addRooms(_UserId);
+		
+	}
 	
 	public static Map<String,String> GetSearchData(String _UserId)
 	{return RedisLogic.RedisGetMap(_UserId + "/Search");}
@@ -22,8 +27,20 @@ public class RedisApi
 	
 	public static String GetUserRating(String _UserId)
 	{return RedisLogic.RedisGet(_UserId + "/Rating");}
-	public static String GetOpenRooms()
-	{return RedisLogic.RedisGet("/Rooms");}
-	
-	
+	public static Map<String,String> GetOpenRooms()
+	{
+		return RedisLogic.RedisGetMap("/Rooms");
+	}
+	public static void CreateRooms(String currentRoom)
+	{
+		Map<String,String> all_rooms = new LinkedHashMap<String,String>();
+		all_rooms.put(currentRoom, "waiting");
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+	}
+	public static void addRooms(String newRoom)
+	{
+		Map<String,String> all_rooms = GetOpenRooms();
+		all_rooms.put(newRoom, "waiting");
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+	}
 }

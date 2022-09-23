@@ -19,9 +19,35 @@ public class MatchingService {
 		_ret.put("IsSearching", true);
 		//retrieve all possible rooms compare if there is already a userid with a room
 		//_Data will contain the user's details and we will first look if exists any room from redis
-		if(room_userId in Rooms) {
-			
+		Map<String,String> all_rooms = RedisApi.GetOpenRooms();
+		String uid = _Data.get("UserId").toString();
+		if(all_rooms == null) {
+			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
+			searchDataRoom.put("status", "waiting");
+			searchDataRoom.put("Uid1", uid);
+			RedisApi.SetSearchData(uid, searchDataRoom);
 		}
+		else {
+			//here we are looking for a waiting room
+			Boolean found_opponent = false;
+			for(String room_key : all_rooms.keySet()) {
+				if(all_rooms.get(room_key).equals("waiting")) {
+					all_rooms.put(room_key, "busy");
+					found_opponent = true;
+					Map<String,String> found_room = RedisApi.GetSearchData(room_key);
+					found_room.put("uid2", uid);
+					//now we need to update in both reshumot
+					break;
+				}
+			}
+			//if player did not find an opponent we must create the room
+			if(!found_opponent) {
+				Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
+				searchDataRoom.put("status", "waiting");
+				searchDataRoom.put("Uid1", _Data.get("UserId").toString());
+			}
+		}
+		
 		else {
 			Map<String,String> _searchData = new LinkedHashMap<String, String>();
 			_searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
