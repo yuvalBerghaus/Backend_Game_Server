@@ -11,12 +11,6 @@ import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
 public class MatchingService {
 	private Integer roomIdCounter = 10000;
 	public static String match_room(Map<String,Object> _Data) {
-		Map<String,Object> _ret = new LinkedHashMap<String,Object>();
-		String _ws = "ws://localhost:8168/gameserver/game/";
-		if(GlobalVariables.curEnviroment == Enviroment.Development)
-			_ws = "ws://54.229.248.156:8080/gameserver/game/";
-		_ret.put("ConnectionUrl",_ws);
-		_ret.put("IsSearching", true);
 		//retrieve all possible rooms compare if there is already a userid with a room
 		//_Data will contain the user's details and we will first look if exists any room from redis
 		Map<String,String> all_rooms = RedisApi.GetOpenRooms();

@@ -54,12 +54,11 @@ public class ConnectionLogic
 				LoggedUsersLogic.getInstance().UpdateLoggedUser(_userId, _user);
 				Map<String,String> _searchingData = RedisApi.GetSearchData(_userId);
 				
-				if(_searchingData != null && _searchingData.containsKey("Rating"))
+				if(_searchingData != null)
 				{
 					try
 					{
-						int _rating = Integer.parseInt(_searchingData.get("Rating"));
-						SearchingLogic.getInstance().addToSearchList(_userId, _rating);
+//						SearchingLogic.getInstance().addToSearchList(_userId, _rating);
 					}
 					catch(Exception e) {Disconnect(_Session);};
 				}

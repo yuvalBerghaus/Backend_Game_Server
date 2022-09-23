@@ -32,6 +32,9 @@ public class searchingController extends HttpServlet {
 		Map<String,Object> _ret = new LinkedHashMap<String, Object>(); 
 		try
 		{
+			String _ws = "ws://localhost:8168/gameserver/game/";
+			if(GlobalVariables.curEnviroment == Enviroment.Development)
+				_ws = "ws://54.229.248.156:8080/gameserver/game/";
 			String _message = request.getParameter("Data");
 			Map<String,Object> _parsedJson = GlobalFunctions.DeserializeJson(_message);
 			if(_parsedJson.containsKey("UserId"))
@@ -41,6 +44,8 @@ public class searchingController extends HttpServlet {
 				{
 					MatchingService.match_room(_parsedJson);
 					System.out.println("Hola como estas?");
+					_ret.put("ConnectionUrl",_ws);
+					_ret.put("IsSearching", true);
 				}
 				else
 				{

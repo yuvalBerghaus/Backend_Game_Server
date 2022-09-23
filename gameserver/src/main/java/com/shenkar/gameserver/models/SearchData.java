@@ -5,10 +5,9 @@ public class SearchData
 	private String userId;
 	private Integer rating;
 	
-	public SearchData(String _UserId,Integer _Rating)
+	public SearchData(String _UserId)
 	{
 		userId = _UserId;
-		rating = _Rating;
 	}
 	
 	public String getUserId() {
