@@ -42,7 +42,7 @@ public class searchingController extends HttpServlet {
 				String _userId = _parsedJson.get("UserId").toString();
 				if(_userId.equals("") == false)
 				{
-					MatchingService.match_room(_parsedJson);
+//					MatchingService.match_room(_parsedJson);
 					System.out.println("Hola como estas?");
 					_ret.put("ConnectionUrl",_ws);
 					_ret.put("IsSearching", true);

@@ -1,14 +1,11 @@
-package com.shenkar.gamelobby.controllers;
+package com.shenkar.gameserver.models;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.shenkar.gamelobby.utils.GlobalFunctions;
-import com.shenkar.gamelobby.utils.GlobalVariables;
-import com.shenkar.gamelobby.utils.RedisApi;
-import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
+import com.shenkar.gameserver.utils.RedisApi;
 
-public class MatchingService {
+public class MatchingServ {
 	private Integer roomIdCounter = 10000;
 	public static String match_room(Map<String,Object> _Data) {
 		//retrieve all possible rooms compare if there is already a userid with a room
@@ -18,7 +15,7 @@ public class MatchingService {
 		if(all_rooms.isEmpty()) {
 			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 			searchDataRoom.put("status", "waiting");
-			searchDataRoom.put("Uid1", uid);
+			searchDataRoom.put("uid1", uid);
 			RedisApi.SetSearchData(uid, searchDataRoom);
 		}
 		else {
@@ -32,6 +29,7 @@ public class MatchingService {
 					found_room.put("uid2", uid);
 					//now we need to update in both reshumot
 					RedisApi.SetSearchData(room_key, found_room);
+					RedisApi.SetSearchData(uid, found_room);
 					return room_key;
 				}
 			}

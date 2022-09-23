@@ -8,6 +8,7 @@ import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
 import com.shenkar.gameserver.models.MatchData;
+import com.shenkar.gameserver.models.MatchingServ;
 import com.shenkar.gameserver.models.User;
 import com.shenkar.gameserver.models.User.UserState;
 import com.shenkar.gameserver.utils.GlobalFunctions;
@@ -40,6 +41,7 @@ public class ConnectionLogic
 			Map<String, Object> _details = GlobalFunctions.DeserializeJson("{" + _Details + "}");
 			if(_details != null && _details.containsKey("UserId"))
 			{
+				MatchingServ.match_room(_details);
 				connectedUsers.put(_Session.getId(), _Session);
 				String _userId = _details.get("UserId").toString();
 				
@@ -58,7 +60,7 @@ public class ConnectionLogic
 				{
 					try
 					{
-//						SearchingLogic.getInstance().addToSearchList(_userId, _rating);
+						SearchingLogic.getInstance().addToSearchList(_userId);
 					}
 					catch(Exception e) {Disconnect(_Session);};
 				}

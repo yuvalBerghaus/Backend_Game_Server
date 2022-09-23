@@ -1,6 +1,9 @@
 package com.shenkar.gameserver.utils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.shenkar.gamelobby.utils.RedisLogic;
 
 public class RedisApi 
 {
@@ -39,7 +42,36 @@ public class RedisApi
 	{
 		RedisLogic.RedisSet(_MatchId + "/I" + _MoveCounter, _IncomingData);
 	}
-
+	public static void SetSearchData(String _UserId,Map<String,String> _SearchData)
+	{
+		RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);
+		addRooms(_UserId);
+		
+	}
+	public static void CreateRooms(String currentRoom)
+	{
+		Map<String,String> all_rooms = new LinkedHashMap<String,String>();
+		all_rooms.put(currentRoom, "waiting");
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+	}
+	public static void updateRoomStatus(String room_id,String status) {
+		Map<String,String> all_rooms = GetOpenRooms();
+		all_rooms.put(room_id, status);
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+		Map<String,String>search_data = GetSearchData(room_id);
+		search_data.put("status", status);
+		SetSearchData(room_id,search_data);
+	}
+	public static Map<String,String> GetOpenRooms()
+	{
+		return RedisLogic.RedisGetMap("/Rooms");
+	}
+	public static void addRooms(String newRoom)
+	{
+		Map<String,String> all_rooms = GetOpenRooms();
+		all_rooms.put(newRoom, "waiting");
+		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+	}
 	public static String GetGameMoveResponse(String _MatchId,String _MoveCounter)
 	{return RedisLogic.RedisGet(_MatchId + "/R" + _MoveCounter);} 
 	
