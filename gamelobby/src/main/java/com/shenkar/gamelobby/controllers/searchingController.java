@@ -39,17 +39,9 @@ public class searchingController extends HttpServlet {
 				String _userId = _parsedJson.get("UserId").toString();
 				if(_userId.equals("") == false)
 				{
-					String _ws = "ws://localhost:8080/gameserver/game/";
-					if(GlobalVariables.curEnviroment == Enviroment.Development)
-						_ws = "ws://54.229.248.156:8080/gameserver/game/";
-					
-					_ret.put("ConnectionUrl",_ws);
-					_ret.put("IsSearching", true);
-					
-					Map<String,String> _searchData = new LinkedHashMap<String, String>();
-					_searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
-					_searchData.put("Rating", RedisApi.GetUserRating(_userId));
-					RedisApi.SetSearchData(_userId, _searchData);
+					/* MatchingService. */
+					// Insert a waiting opponent
+					System.out.println("Hola como estas?");
 				}
 				else
 				{

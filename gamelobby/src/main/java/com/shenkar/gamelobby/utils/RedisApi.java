@@ -22,7 +22,8 @@ public class RedisApi
 	
 	public static String GetUserRating(String _UserId)
 	{return RedisLogic.RedisGet(_UserId + "/Rating");}
-	
+	public static String GetOpenRooms()
+	{return RedisLogic.RedisGet("/Rooms");}
 	
 	
 }

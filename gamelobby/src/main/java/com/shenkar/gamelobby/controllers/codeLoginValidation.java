@@ -40,15 +40,18 @@ public class codeLoginValidation extends HttpServlet {
 	protected void Login_Validation(HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String,Object> _ret = new LinkedHashMap<String, Object>(); 
-		String PhoneNumber = GlobalVariables.current_user.get("PhoneNumber");
-		Map<String,String> _loginData = RedisApi.GetUserData(GlobalVariables.current_user.get("PhoneNumber"));
 		try
 		{
 			String _message = request.getParameter("Data");
 			Map<String,Object> _parsedJson = GlobalFunctions.DeserializeJson(_message);
+
 			if(_parsedJson.containsKey("Code"))
 			{
-				if(_parsedJson.get("Code").equals(GlobalVariables.current_user.get("Code"))) {
+				Map<String,String> data_to_login = RedisApi.GetUserData(_parsedJson.get("Code").toString());
+				Map<String,String> _loginData = RedisApi.GetUserData(data_to_login.get("Code").toString());
+				if(_parsedJson.get("Code").toString().equals(_loginData.get("Code").toString())) {
+					String user_id = _loginData.get("UserId").toString();
+					_loginData = RedisApi.GetUserData(user_id);
 					_ret.put("Response", "CodeValidation");
 					_ret.put("IsCreated", true);
 					_ret.put("NickName", _loginData.get("NickName"));
@@ -93,9 +96,7 @@ public class codeLoginValidation extends HttpServlet {
 							  _loginData.put("Date", current_date);
 							  //								i
 						}
-						RedisApi.SetUserData(PhoneNumber, _loginData);
-						String loginStringData = GlobalFunctions.SerializeToJson(_loginData);
-						GlobalVariables.users.put(_loginData.get("UserId"),GlobalFunctions.DeserializeJson(loginStringData));
+						RedisApi.SetUserData(_loginData.get("UserId"), _loginData);
 				}
 				else
 				{

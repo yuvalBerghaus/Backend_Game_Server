@@ -48,6 +48,9 @@ public class loginController extends HttpServlet {
 						_ret.put("Response", "Login");
 						String random_number = GlobalFunctions.getRandomNumberString();
 						_ret.put("Code", random_number);
+						_loginData.put("Code", random_number);
+						_loginData.put("PhoneNumber", phone_number);
+						RedisApi.SetUserData(random_number, _loginData);
 						GlobalVariables.current_user.put("Code", random_number);
 						GlobalVariables.current_user.put("PhoneNumber", phone_number);
 					}

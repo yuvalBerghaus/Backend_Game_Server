@@ -72,6 +72,10 @@ public class codeRegisterValidation extends HttpServlet {
 						_userData.put("sequence_day", "0");
 						_userData.put("Date", current_date);
 						RedisApi.SetUserData(uid,_userData);
+						_uid_data.put("UserId",_userData.get("UserId"));
+						_uid_data.put("Code",_loginData.get("Code"));
+						_uid_data.put("PhoneNumber",_loginData.get("PhoneNumber"));
+						RedisApi.SetUserData(_loginData.get("PhoneNumber"), _uid_data);
 					}
 					else 
 					{
