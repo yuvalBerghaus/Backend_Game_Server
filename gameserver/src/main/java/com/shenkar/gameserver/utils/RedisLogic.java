@@ -7,14 +7,13 @@ import redis.clients.jedis.JedisPool;
 
 public class RedisLogic 
 {
-	private static String path = "redis-17213.c300.eu-central-1-1.ec2.cloud.redislabs.com";
-	private static int port = 17213;
+	private static String path = "redis-19002.c300.eu-central-1-1.ec2.cloud.redislabs.com";
+	private static int port = 19002;
 	private static String userName = "default";
-	private static String cachekey = "mkMFFRHpb04dJI4d93q11kTUlEFh2rDE";
+	private static String cachekey = "77MKa6xIHrhbuEeUx19u7Ey1IlH0AOhN";
 	
 	private static JedisPool poolConnection;
 	private static Boolean isInit = false;
-	
 	
 	private static void RedisInit()
 	{
@@ -78,7 +77,6 @@ public class RedisLogic
 	    	return "";
 	    return _data;
 	 }
-
 	public static Long RedisDelete(String _Key)
 	{
 		RedisInit();
@@ -87,5 +85,4 @@ public class RedisLogic
 	    _jedis.close();
 	    return _data;
 	}
-
 }

@@ -12,6 +12,7 @@ public class User
 	private UserState state;
 	private Session session;
 	private String userId;
+	
 	public User(Session _Session,String _UserId)
 	{
 		session = _Session;

@@ -11,7 +11,7 @@ import com.shenkar.gameserver.threads.MatchingThread;
 
 public class SearchingLogic 
 {
-	private ArrayList<String> searchingList;
+	private LinkedHashMap<String, Integer> searchingList;
 	private MatchingThread matchingThread;
 	
 	private static SearchingLogic instance;
@@ -24,14 +24,14 @@ public class SearchingLogic
 	
 	public SearchingLogic()
 	{
-		searchingList = new ArrayList<String>();
+		searchingList = new LinkedHashMap<String, Integer>();
 		
 		matchingThread = new MatchingThread();
 		matchingThread.StartThread();
 	}
-	public void addToSearchList(String _UserId)
+	public void addToSearchList(String _UserId, Integer _Rating)
 	{
-		searchingList.add(_UserId);
+		searchingList.put(_UserId, _Rating);
 	}
 	
 	public void rmvFromSearchList(String _UserId)
@@ -44,8 +44,8 @@ public class SearchingLogic
 		List<SearchData> _searchData = new ArrayList<SearchData>();
 		if(searchingList != null)
 		{
-			for(int i = 0 ; i < searchingList.size(); i++)
-				_searchData.add(new SearchData(searchingList.get(i)));
+			for(String userId : searchingList.keySet())
+				_searchData.add(new SearchData(userId, searchingList.get(userId)));
 		}
 		return SortSearchDataList(_searchData);
 	}

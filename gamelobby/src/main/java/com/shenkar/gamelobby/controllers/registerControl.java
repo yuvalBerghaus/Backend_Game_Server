@@ -15,7 +15,7 @@ import com.shenkar.gamelobby.utils.GlobalFunctions;
 import com.shenkar.gamelobby.utils.GlobalVariables;
 import com.shenkar.gamelobby.utils.RedisApi;
 
-@WebServlet("/register")
+@WebServlet("/register")//hi
 public class registerControl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

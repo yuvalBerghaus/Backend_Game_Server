@@ -13,7 +13,7 @@ import com.shenkar.gameserver.logic.LoggedUsersLogic;
 @WebServlet("/info")
 public class InfoController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-      
+      //hi
     public InfoController() {
         super();
         // TODO Auto-generated constructor stub

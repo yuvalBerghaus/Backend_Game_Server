@@ -1,7 +1,6 @@
 package com.shenkar.gameserver.logic;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,24 +44,26 @@ public class ConnectionLogic
 				String wtf = MatchingServ.getInstance().match_room(_details);
 				connectedUsers.put(_Session.getId(), _Session);
 				String _userId = _details.get("UserId").toString();
-				System.out.println(wtf);
-				//Delete old mapping to old session for the user id
 				
+				//Delete old mapping to old session for the user id
 				LoggedUsersLogic.getInstance().removeUserSessionUserId(_userId);
 				
 				//Add a new mapping: session to userid
 				LoggedUsersLogic.getInstance().addSessionUser(_Session.getId(), _userId);
-				
+				System.out.println(wtf);
 				User _user = new User(_Session,_userId);
 				_user.setState(UserState.Searching);
 				LoggedUsersLogic.getInstance().UpdateLoggedUser(_userId, _user);
 				Map<String,String> _searchingData = RedisApi.GetSearchData(_userId);
-				
+				System.out.println(_searchingData);
+//				if(_searchingData != null && _searchingData.containsKey("Rating"))
 				if(_searchingData != null)
 				{
 					try
 					{
-						SearchingLogic.getInstance().addToSearchList(_userId);
+//						int _rating = Integer.parseInt(_searchingData.get("Rating"));
+						int _rating =0;
+						SearchingLogic.getInstance().addToSearchList(_userId, _rating);
 					}
 					catch(Exception e) {Disconnect(_Session);};
 				}

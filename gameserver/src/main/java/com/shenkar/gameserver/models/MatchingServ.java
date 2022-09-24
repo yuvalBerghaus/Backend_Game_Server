@@ -3,7 +3,6 @@ package com.shenkar.gameserver.models;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.shenkar.gameserver.logic.LoggedUsersLogic;
 import com.shenkar.gameserver.utils.RedisApi;
 
 public class MatchingServ {
