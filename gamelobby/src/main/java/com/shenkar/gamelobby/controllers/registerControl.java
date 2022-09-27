@@ -50,8 +50,6 @@ public class registerControl extends HttpServlet {
 				//if(GlobalVariables.users.containsKey(_email) == false)
 				if(_loginData.containsKey("PhoneNumber") == false)
 				{
-					GlobalVariables.current_user.put("Code", gen_code);
-					GlobalVariables.current_user.put("PhoneNumber", phone_number);
 					_loginData.put("Code", gen_code);
 					_loginData.put("PhoneNumber", phone_number);
 					RedisApi.SetUserData(gen_code, _loginData);

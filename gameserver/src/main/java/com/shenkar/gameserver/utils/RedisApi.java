@@ -45,14 +45,18 @@ public class RedisApi
 	
 	public static String GetGameMoveIncoming(String _MatchId,String _MoveCounter)
 	{return RedisLogic.RedisGet(_MatchId + "/I" + _MoveCounter);} 
-	
+	//search data is a record that contains the roomID (according to the first user's UID
 	public static void SetSearchData(String _UserId,Map<String,String> _SearchData)
 	{
-		RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);
-		addRooms(_UserId);
-		
+		if(_UserId != null && _SearchData != null) {
+			RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);
+			addRooms(_UserId);	
+		}
+		else {
+			System.out.println("Missing variables in function SetSearchData");
+		}
 	}
-	
+	//this record key gives us all the roooms that are currently running in the server
 	public static Map<String,String> GetOpenRooms()
 	{
 		return RedisLogic.RedisGetMap("/Rooms");
@@ -60,11 +64,13 @@ public class RedisApi
 	
 	public static void addRooms(String newRoom)
 	{
-		Map<String,String> all_rooms = GetOpenRooms();
-		all_rooms.put(newRoom, "waiting");
-		RedisLogic.RedisSetMap("/Rooms",all_rooms);
+		if(newRoom != null) {
+			Map<String,String> all_rooms = GetOpenRooms();
+			all_rooms.put(newRoom, "waiting");
+			RedisLogic.RedisSetMap("/Rooms",all_rooms);			
+		}
 	}
-	
+	//everytime we implement this function we update the status of all the records according to the status we assigned (to all the records that were created due to the room creation process)
 	public static void updateRoomStatus(String room_id,String status) {
 		Map<String,String> all_rooms = GetOpenRooms();
 		all_rooms.put(room_id, status);

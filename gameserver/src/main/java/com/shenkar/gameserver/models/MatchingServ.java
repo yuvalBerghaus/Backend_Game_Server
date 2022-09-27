@@ -19,6 +19,7 @@ public class MatchingServ {
 		//_Data will contain the user's details and we will first look if exists any room from redis
 		Map<String,String> all_rooms = RedisApi.GetOpenRooms();
 		String uid = _Data.get("UserId").toString();
+		//checking  if there are no rooms then obviously the requesting user needs to create the room himself
 		if(all_rooms.isEmpty()) {
 			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 			searchDataRoom.put("status", "waiting");

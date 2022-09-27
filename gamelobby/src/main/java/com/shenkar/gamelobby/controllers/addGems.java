@@ -43,7 +43,7 @@ public class addGems extends HttpServlet {
 		{
 			String _message = request.getParameter("Data");
 			Map<String,Object> _parsedJson = GlobalFunctions.DeserializeJson(_message);
-			if(_parsedJson.containsKey("UserId"))
+			if(_parsedJson.containsKey("UserId") && _parsedJson.containsKey("Gems"))
 			{
 				String uid = _parsedJson.get("UserId").toString();
 				String gems_recieved = _parsedJson.get("Gems").toString();
