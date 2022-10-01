@@ -24,7 +24,7 @@ public class MatchingServ {
 			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 			searchDataRoom.put("status", "waiting");
 			searchDataRoom.put("uid1", uid);
-			RedisApi.SetSearchData(uid, searchDataRoom);
+			RedisApi.SetSearchData((++roomIdCounter).toString(), searchDataRoom);
 		}
 		else {
 			//here we are looking for a waiting room
@@ -32,21 +32,22 @@ public class MatchingServ {
 			for(String room_key : all_rooms.keySet()) {
 				if(all_rooms.get(room_key).equals("waiting")) {
 					RedisApi.updateRoomStatus(room_key, "busy");
+					all_rooms.put(room_key, "busy");
 					found_opponent = true;
 					Map<String,String> found_room = RedisApi.GetSearchData(room_key);
 					found_room.put("uid2", uid);
 					//now we need to update in both reshumot
 					RedisApi.SetSearchData(room_key, found_room);
-					RedisApi.SetSearchData(uid, found_room);
 					return room_key;
 				}
 			}
 			//if player did not find an opponent we must create the room
 			if(!found_opponent) {
+				String status = "waiting";
 				Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
-				searchDataRoom.put("status", "waiting");
+				searchDataRoom.put("status", status);
 				searchDataRoom.put("Uid1", _Data.get("UserId").toString());
-				RedisApi.addRooms(uid);
+				RedisApi.addRooms(uid, status);
 			}
 		}
 		return uid;

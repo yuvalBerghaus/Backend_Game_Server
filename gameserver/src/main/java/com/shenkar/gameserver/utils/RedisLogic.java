@@ -7,10 +7,10 @@ import redis.clients.jedis.JedisPool;
 
 public class RedisLogic 
 {
-	private static String path = "redis-19002.c300.eu-central-1-1.ec2.cloud.redislabs.com";
-	private static int port = 19002;
+	private static String path = "redis-12580.c275.us-east-1-4.ec2.cloud.redislabs.com";
+	private static int port = 12580;
 	private static String userName = "default";
-	private static String cachekey = "77MKa6xIHrhbuEeUx19u7Ey1IlH0AOhN";
+	private static String cachekey = "sVlqGjBgfbP6GHsIUFGXvRLnXWgxJd9i";
 	
 	private static JedisPool poolConnection;
 	private static Boolean isInit = false;

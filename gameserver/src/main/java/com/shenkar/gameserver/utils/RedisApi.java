@@ -46,11 +46,11 @@ public class RedisApi
 	public static String GetGameMoveIncoming(String _MatchId,String _MoveCounter)
 	{return RedisLogic.RedisGet(_MatchId + "/I" + _MoveCounter);} 
 	//search data is a record that contains the roomID (according to the first user's UID
-	public static void SetSearchData(String _UserId,Map<String,String> _SearchData)
+	public static void SetSearchData(String _roomID,Map<String,String> _SearchData)
 	{
-		if(_UserId != null && _SearchData != null) {
-			RedisLogic.RedisSetMap(_UserId + "/Search", _SearchData);
-			addRooms(_UserId);	
+		if(_roomID != null && _SearchData != null) {
+			RedisLogic.RedisSetMap(_roomID + "/Search", _SearchData);
+			addRooms(_roomID, _SearchData.get("status"));	
 		}
 		else {
 			System.out.println("Missing variables in function SetSearchData");
@@ -62,11 +62,11 @@ public class RedisApi
 		return RedisLogic.RedisGetMap("/Rooms");
 	}
 	
-	public static void addRooms(String newRoom)
+	public static void addRooms(String newRoom, String status)
 	{
 		if(newRoom != null) {
 			Map<String,String> all_rooms = GetOpenRooms();
-			all_rooms.put(newRoom, "waiting");
+			all_rooms.put(newRoom, status);
 			RedisLogic.RedisSetMap("/Rooms",all_rooms);			
 		}
 	}
@@ -74,6 +74,7 @@ public class RedisApi
 	public static void updateRoomStatus(String room_id,String status) {
 		Map<String,String> all_rooms = GetOpenRooms();
 		all_rooms.put(room_id, status);
+		RedisLogic.RedisDelete("/Rooms");
 		RedisLogic.RedisSetMap("/Rooms",all_rooms);
 		Map<String,String>search_data = GetSearchData(room_id);
 		search_data.put("status", status);
