@@ -34,7 +34,7 @@ public class searchingController extends HttpServlet {
 		{
 			String _ws = "ws://localhost:8080/gameserver/game/";
 			if(GlobalVariables.curEnviroment == Enviroment.Development)
-				_ws = "ws://54.229.248.156:8080/gameserver/game/";
+				_ws = "ws://34.204.6.77:8080/gameserver/game/";
 			String _message = request.getParameter("Data");
 			Map<String,Object> _parsedJson = GlobalFunctions.DeserializeJson(_message);
 			if(_parsedJson.containsKey("UserId"))
