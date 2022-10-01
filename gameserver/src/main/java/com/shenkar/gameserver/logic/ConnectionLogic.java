@@ -6,9 +6,7 @@ import java.util.Map;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
-
 import com.shenkar.gameserver.models.MatchData;
-import com.shenkar.gameserver.models.MatchingServ;
 import com.shenkar.gameserver.models.User;
 import com.shenkar.gameserver.models.User.UserState;
 import com.shenkar.gameserver.utils.GlobalFunctions;
@@ -41,7 +39,6 @@ public class ConnectionLogic
 			Map<String, Object> _details = GlobalFunctions.DeserializeJson("{" + _Details + "}");
 			if(_details != null && _details.containsKey("UserId"))
 			{
-				String wtf = MatchingServ.getInstance().match_room(_details);
 				connectedUsers.put(_Session.getId(), _Session);
 				String _userId = _details.get("UserId").toString();
 				
@@ -50,7 +47,6 @@ public class ConnectionLogic
 				
 				//Add a new mapping: session to userid
 				LoggedUsersLogic.getInstance().addSessionUser(_Session.getId(), _userId);
-				System.out.println(wtf);
 				User _user = new User(_Session,_userId);
 				_user.setState(UserState.Searching);
 				LoggedUsersLogic.getInstance().UpdateLoggedUser(_userId, _user);
@@ -61,9 +57,13 @@ public class ConnectionLogic
 				{
 					try
 					{
-//						int _rating = Integer.parseInt(_searchingData.get("Rating"));
-						int _rating =0;
-						SearchingLogic.getInstance().addToSearchList(_userId, _rating);
+						Integer bet = 0;
+						if(_searchingData.containsKey("bet2"))
+							bet = (int) Double.parseDouble(_searchingData.get("bet2"));
+						else if(_searchingData.containsKey("bet1")) {
+							bet = (int) Double.parseDouble(_searchingData.get("bet1"));
+						}
+						SearchingLogic.getInstance().addToSearchList(_userId, bet);
 					}
 					catch(Exception e) {Disconnect(_Session);};
 				}

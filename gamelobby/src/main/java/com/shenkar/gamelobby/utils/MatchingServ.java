@@ -1,13 +1,11 @@
-package com.shenkar.gameserver.models;
+package com.shenkar.gamelobby.utils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.shenkar.gameserver.utils.RedisApi;
-
 public class MatchingServ {
-	private Integer roomIdCounter = 10000;
 	private static MatchingServ instance;
+	private static Integer roomID = 1000;
 	public static MatchingServ getInstance()
 	{
 		if(instance == null)
@@ -24,7 +22,10 @@ public class MatchingServ {
 			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 			searchDataRoom.put("status", "waiting");
 			searchDataRoom.put("uid1", uid);
-			RedisApi.SetSearchData((++roomIdCounter).toString(), searchDataRoom);
+			searchDataRoom.put("bet1", _Data.get("Amount").toString());
+			RedisApi.SetSearchData(roomID.toString(), searchDataRoom);
+			RedisApi.SetSearchData(uid, searchDataRoom);
+			return (roomID++).toString();
 		}
 		else {
 			//here we are looking for a waiting room
@@ -36,8 +37,11 @@ public class MatchingServ {
 					found_opponent = true;
 					Map<String,String> found_room = RedisApi.GetSearchData(room_key);
 					found_room.put("uid2", uid);
+					found_room.put("bet2", _Data.get("Amount").toString());
 					//now we need to update in both reshumot
 					RedisApi.SetSearchData(room_key, found_room);
+					RedisApi.SetSearchData(found_room.get("uid1"), found_room);
+					RedisApi.SetSearchData(found_room.get("uid2"), found_room);
 					return room_key;
 				}
 			}
@@ -47,10 +51,11 @@ public class MatchingServ {
 				Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
 				searchDataRoom.put("status", status);
 				searchDataRoom.put("Uid1", _Data.get("UserId").toString());
-				RedisApi.addRooms(uid, status);
+				RedisApi.addRooms((roomID++).toString(), status);
+				return roomID.toString();
 			}
 		}
-		return uid;
+		return roomID.toString();
 		/*
 		 * else { Map<String,String> _searchData = new LinkedHashMap<String, String>();
 		 * _searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());

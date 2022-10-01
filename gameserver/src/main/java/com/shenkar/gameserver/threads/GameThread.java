@@ -23,7 +23,7 @@ public class GameThread implements Runnable
 	private int destroyTime;
 	private List<User> users;
 	private List<String> usersIds;
-	private List<Integer> ratings;
+	private List<Integer> bets;
 	private Boolean isRoomActive;
 	private Boolean isDetroyThread;
 	private Date startDate;
@@ -31,13 +31,13 @@ public class GameThread implements Runnable
 	private Integer moveCounter;
 	private RoomTime roomTime;
 	
-	public GameThread(String _MatchId,List<User> _Users,List<Integer> _Ratings,int _TurnTime,int _DestroyTime)
+	public GameThread(String _MatchId,List<User> _Users,List<Integer> _bets,int _TurnTime,int _DestroyTime)
 	{
 		matchId = _MatchId;
 		turnTime = _TurnTime;
 		destroyTime = _DestroyTime;
 		users = _Users;
-		ratings = _Ratings;
+		bets = _bets;
 		isRoomActive = false;
 		moveCounter = 0;
 		roomTime = new RoomTime(_TurnTime);
@@ -168,7 +168,7 @@ public class GameThread implements Runnable
 	}
 
 	public void StopGame(String _Winner) 
-	{
+	{ // We need to add the gems to the winner and take the gems out from the loser
 		try
 		{
 			Map<String, Object> _notifyData = new LinkedHashMap<String, Object>();
@@ -176,8 +176,13 @@ public class GameThread implements Runnable
 			_notifyData.put("Winner", _Winner);
 			_notifyData.put("MC", moveCounter);
 			String _toSend = GlobalFunctions.SerializeToJson(_notifyData);
+			Map<String,String> user = RedisApi.GetUserData(_Winner);
+			Double current_gems = Double.parseDouble(user.get("Gems"));
+			current_gems += bets.get(0);
+			current_gems += bets.get(1);
+			user.put("Gems", current_gems.toString());
+			RedisApi.SetUserData(_Winner, user);
 			BroadcastToRoom(_toSend);
-			
 			RedisApi.SetGameMoveResponse(matchId, moveCounter.toString(), _toSend);
 			CloseRoom();
 		}

@@ -213,8 +213,10 @@ public class ServerLogic
 				GameThread _room = activeRooms.get(_matchId);
 				if(_room != null)
 				{
-					if(_room.getIsRoomActive())
+					if(_room.getIsRoomActive()) {
 						_room.StopGame(_Details.get("Winner").toString());
+						_retData.put("Gems", RedisApi.GetUserData(_Details.get("Winner").toString()).get("Gems"));
+					}
 					else _retData.put("ErrorCode", GlobalEnums.errorCodes.RoomClosed.getValue());
 				}
 				else _retData.put("ErrorCode", GlobalEnums.errorCodes.RoomDoesntExist.getValue());

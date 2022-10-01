@@ -15,7 +15,7 @@ import com.shenkar.gamelobby.utils.GlobalEnums;
 import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
 import com.shenkar.gamelobby.utils.GlobalFunctions;
 import com.shenkar.gamelobby.utils.GlobalVariables;
-import com.shenkar.gamelobby.utils.RedisApi;
+import com.shenkar.gamelobby.utils.MatchingServ;
 
 @WebServlet("/searchingOpponent")
 public class searchingController extends HttpServlet {
@@ -42,9 +42,9 @@ public class searchingController extends HttpServlet {
 				String _userId = _parsedJson.get("UserId").toString();
 				if(_userId.equals("") == false)
 				{
-//					MatchingService.match_room(_parsedJson);
-					System.out.println("Hola como estas?");
+					String matchID = MatchingServ.getInstance().match_room(_parsedJson);
 					_ret.put("ConnectionUrl",_ws);
+					_ret.put("match_id", matchID);
 					_ret.put("IsSearching", true);
 				}
 				else

@@ -3,18 +3,18 @@ package com.shenkar.gameserver.models;
 public class SearchData 
 {
 	private String userId;
-	private Integer rating;
+	private Integer bet;
 	
-	public SearchData(String _UserId,Integer _Rating)
+	public SearchData(String _UserId,Integer _bet)
 	{
 		userId = _UserId;
-		rating = _Rating;
+		bet = _bet;
 	}
 	
 	public String getUserId() {
 		return userId;
 	}
-	public Integer getRating() {
-		return rating;
+	public Integer getBet() {
+		return bet;
 	}
 }

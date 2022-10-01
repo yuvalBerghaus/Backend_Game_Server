@@ -52,7 +52,7 @@ public class MatchingLogic
 			{
 				_ret.put("IsSuccess", true);
 				_curMatchData.ChangePlayerReady(_User.getUserId(), true);
-				if(_curMatchData.IsAllReady())
+				if(_curMatchData.IsAllReady()) //Thats an if statement that will enable the game to start between both players
 				{
 					RemoveMatchData(_MatchId);
 					_ret = CreatingMatchLogic(_curMatchData);
@@ -70,8 +70,8 @@ public class MatchingLogic
 		
 		//Insert To DB and return MatchId of the DB
 		String _matchId = CreateRoom(_curMatchData.getUserId1(),_curMatchData.getUserId2(),
-				_curMatchData.getRating1().toString(),
-				_curMatchData.getRating2().toString());
+				_curMatchData.getBet1().toString(),
+				_curMatchData.getBet2().toString());
 		//Create Room
 		
 		int _turnTime = GlobalVaribles.getInstance().getTurnTime();
@@ -79,8 +79,8 @@ public class MatchingLogic
 		User _u1 = LoggedUsersLogic.getInstance().getLoggedUser(_curMatchData.getUserId1());
 		User _u2 = LoggedUsersLogic.getInstance().getLoggedUser(_curMatchData.getUserId2());
 		List<User> _users = Arrays.asList(_u1,_u2);
-		List<Integer> _ratings = Arrays.asList(_curMatchData.getRating1(),_curMatchData.getRating2());
-		GameThread _gameRoom = new GameThread(_matchId,_users,_ratings,_turnTime,_destroyTime);
+		List<Integer> _bets = Arrays.asList(_curMatchData.getBet1(),_curMatchData.getBet2());
+		GameThread _gameRoom = new GameThread(_matchId,_users,_bets,_turnTime,_destroyTime);
 		ServerLogic.getInstance().AddRoom(_matchId, _gameRoom);
 		_gameRoom.StartGame();
 		
@@ -90,7 +90,7 @@ public class MatchingLogic
 		return _ret;
 	}
 	
-	private String CreateRoom(String _UserId1,String _UserId2,String _Rating1,String _Rating2)
+	private String CreateRoom(String _UserId1,String _UserId2,String _bet1,String _bet2)
 	{
 		Integer _matchId = 1;
 		String _redisId = RedisApi.GetMatchId();
@@ -101,8 +101,8 @@ public class MatchingLogic
 		_newMatch.put("MatchId", _matchId.toString());
 		_newMatch.put("UserId1", _UserId1);
 		_newMatch.put("UserId2", _UserId2);
-		_newMatch.put("Rating1", _Rating1);
-		_newMatch.put("Rating2", _Rating2);
+		_newMatch.put("Bet1", _bet1);
+		_newMatch.put("Bet2", _bet2);
 	
 		RedisApi.SetRoomData(_matchId.toString(),_newMatch);
 		RedisApi.SetMatchId(_matchId.toString());

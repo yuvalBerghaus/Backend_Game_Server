@@ -62,7 +62,7 @@ public class MatchingThread implements Runnable
 				for(int j = i + 1; j < _searchers.size() && _shouldContinue; j++)
 				{
 					SearchData _secondUser = _searchers.get(j);
-					if(RatingMatched(_firstUser.getRating(),_secondUser.getRating()))
+					if(BetMatched(_firstUser.getBet(),_secondUser.getBet()))
 					{
 						List<User> _matchedUsers = Arrays.asList(
 								LoggedUsersLogic.getInstance().getLoggedUser(_firstUser.getUserId()),
@@ -82,7 +82,7 @@ public class MatchingThread implements Runnable
 							if(_success.size() == 2 && _success.get(0) && _success.get(1))
 							{
 								MatchData _matchData = new MatchData(_firstUser.getUserId(), _secondUser.getUserId(),matchId,
-										_firstUser.getRating(),_secondUser.getRating());
+										_firstUser.getBet(),_secondUser.getBet());
 								MatchingLogic.getInstance().UpdateMatchData(matchId.toString(), _matchData);
 								
 								for(User _u : _matchedUsers)
@@ -123,10 +123,10 @@ public class MatchingThread implements Runnable
 		return false;
 	}
 
-	private boolean RatingMatched(Integer _Rating1, Integer _Rating2) 
+	private boolean BetMatched(Integer _Rating1, Integer _Rating2) 
 	{
 		Integer _calc = Math.abs(_Rating1 - _Rating2);
-		if(_calc <= GlobalVaribles.getInstance().getMatchingRating())
+		if(_calc <= GlobalVaribles.getInstance().getMatchingBet())
 			return true;
 		return false;
 	}

@@ -2,8 +2,8 @@ package com.shenkar.gameserver.utils;
 
 public class GlobalVaribles 
 {
-	private Integer matchingRating = 50;
-	public Integer getMatchingRating() {return matchingRating;}
+	private Integer matchingBet = 50;
+	public Integer getMatchingBet() {return matchingBet;}
 	
 	private Integer turnTime = 10;
 	public Integer getTurnTime() 

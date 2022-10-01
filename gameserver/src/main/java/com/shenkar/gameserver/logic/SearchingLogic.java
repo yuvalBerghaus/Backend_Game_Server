@@ -29,9 +29,9 @@ public class SearchingLogic
 		matchingThread = new MatchingThread();
 		matchingThread.StartThread();
 	}
-	public void addToSearchList(String _UserId, Integer _Rating)
+	public void addToSearchList(String _UserId, Integer _Bet)
 	{
-		searchingList.put(_UserId, _Rating);
+		searchingList.put(_UserId, _Bet);
 	}
 	
 	public void rmvFromSearchList(String _UserId)
@@ -54,8 +54,8 @@ public class SearchingLogic
     { 
         Collections.sort(_Data, new Comparator<SearchData>() {
       	  public int compare(SearchData c1, SearchData c2) {
-      	    if (c1.getRating() > c2.getRating()) return -1;
-      	    if (c1.getRating() < c2.getRating()) return 1;
+      	    if (c1.getBet() > c2.getBet()) return -1;
+      	    if (c1.getBet() < c2.getBet()) return 1;
       	    return 0;
       	  }});
       
