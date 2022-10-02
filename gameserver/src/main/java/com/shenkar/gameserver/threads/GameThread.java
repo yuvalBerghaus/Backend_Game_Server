@@ -178,8 +178,10 @@ public class GameThread implements Runnable
 			String _toSend = GlobalFunctions.SerializeToJson(_notifyData);
 			Map<String,String> user = RedisApi.GetUserData(_Winner);
 			Double current_gems = Double.parseDouble(user.get("Gems"));
-			current_gems += bets.get(0);
-			current_gems += bets.get(1);
+			if(user.get("uid1") == _Winner)
+				current_gems += bets.get(0);
+			else
+				current_gems += bets.get(1);
 			user.put("Gems", current_gems.toString());
 			RedisApi.SetUserData(_Winner, user);
 			BroadcastToRoom(_toSend);
@@ -187,8 +189,6 @@ public class GameThread implements Runnable
 			CloseRoom();
 		}
 		catch(Exception e) {System.out.println("(StopGame) Error: " + e.getMessage());}
-		
-		
 	}
 
 	private void CloseRoom() 

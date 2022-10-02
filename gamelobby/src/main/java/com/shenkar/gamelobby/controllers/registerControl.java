@@ -47,7 +47,6 @@ public class registerControl extends HttpServlet {
 				System.out.println("Success");
 				String phone_number = _parsedJson.get("PhoneNumber").toString();
 				Map<String,String> _loginData = RedisApi.GetUserData(phone_number);
-				//if(GlobalVariables.users.containsKey(_email) == false)
 				if(_loginData.containsKey("PhoneNumber") == false)
 				{
 					_loginData.put("Code", gen_code);
