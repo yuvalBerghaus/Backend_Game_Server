@@ -67,26 +67,12 @@ public class MatchingServ {
 		_roomData.put("uid1", uid);
 		_roomData.put("roomID", _roomid.toString());
 		String _parsedRoomData = GlobalFunctions.SerializeToJson(_roomData);
-		String current_rooms_of_betID = all_rooms.get(betId);
+		RedisApi.addRooms(betId,_parsedRoomData);
 		// If there are no rooms in this bet ID that means we need to add it
-//		if(current_rooms_of_betID == null) {
-////			Map<String,String> curr_rooms_map = new LinkedHashMap<String,String>();
-////			curr_rooms_map.put(_roomid.toString(), _parsedRoomData);
-////			String current_rooms = GlobalFunctions.SerializeToJson(curr_rooms_map);
-////			all_rooms.put(betId, current_rooms);
-//			Map<String,String> curr_rooms_betID_map = new LinkedHashMap<String,String>();
-//			curr_rooms_betID_map.put(_roomid.toString(), _parsedRoomData);
-//			current_rooms_of_betID = GlobalFunctions.SerializeToJson(curr_rooms_betID_map);
-//			RedisApi.SetRoomData(uid, _roomData);
-//		}
-//		else {
-//			current_rooms_of_betID
-//		}
 		Map<String,String> _matchingData = new LinkedHashMap<String,String>();
 		_matchingData.put("roomId", _roomid.toString());
 		RedisApi.SetRoomData(_roomid.toString(), _roomData);
 		RedisApi.addRooms(betId, _parsedRoomData);
 		RedisApi.SetUserMatchData(uid, _matchingData);
-		
 	}
 }
