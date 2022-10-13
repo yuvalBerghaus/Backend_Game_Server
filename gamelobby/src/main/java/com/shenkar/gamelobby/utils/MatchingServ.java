@@ -3,6 +3,8 @@ package com.shenkar.gamelobby.utils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.shenkar.gamelobby.utils.GlobalEnums.Enviroment;
+
 public class MatchingServ {
 	private static MatchingServ instance;
 	private static Integer roomID = 1000;
@@ -12,54 +14,79 @@ public class MatchingServ {
 			instance = new MatchingServ();
 		return instance;
 	}
-	public String match_room(Map<String,Object> _Data) {
-		//retrieve all possible rooms compare if there is already a userid with a room
-		//_Data will contain the user's details and we will first look if exists any room from redis
-		Map<String,String> all_rooms = RedisApi.GetOpenRooms();
-		String uid = _Data.get("UserId").toString();
-		//checking  if there are no rooms then obviously the requesting user needs to create the room himself
-		if(all_rooms.isEmpty()) {
-			Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
-			searchDataRoom.put("status", "waiting");
-			searchDataRoom.put("uid1", uid);
-			searchDataRoom.put("bet1", _Data.get("Amount").toString());
-			RedisApi.SetSearchData(roomID.toString(), searchDataRoom);
-			RedisApi.SetSearchData(uid, searchDataRoom);
-			return (roomID++).toString();
-		}
-		else {
-			//here we are looking for a waiting room
-			Boolean found_opponent = false;
-			for(String room_key : all_rooms.keySet()) {
-				if(all_rooms.get(room_key).equals("waiting")) {
-					RedisApi.updateRoomStatus(room_key, "busy");
-					all_rooms.put(room_key, "busy");
-					found_opponent = true;
-					Map<String,String> found_room = RedisApi.GetSearchData(room_key);
-					found_room.put("uid2", uid);
-					found_room.put("bet2", _Data.get("Amount").toString());
-					//now we need to update in both reshumot
-					RedisApi.SetSearchData(room_key, found_room);
-					RedisApi.SetSearchData(found_room.get("uid1"), found_room);
-					RedisApi.SetSearchData(found_room.get("uid2"), found_room);
-					return room_key;
+	public Map<String, Object> match_room(Map<String,Object> _Data) {
+		Map<String,Object> _ret = new LinkedHashMap<String,Object>();
+		String _ws = "ws://localhost:8080/gameserver/game/";
+		if(GlobalVariables.curEnviroment == Enviroment.Development)
+			_ws = "ws://34.204.6.77:8080/gameserver/game/";
+		if(_Data.containsKey("Amount") && _Data.containsKey("UserId")) {
+			//_Data will contain the user's details and we will first look if exists any room from redis
+			Map<String,String> all_rooms = RedisApi.GetOpenRooms();
+			String uid = _Data.get("UserId").toString();
+			String betId = _Data.get("Amount").toString();
+			
+			if(all_rooms.containsKey(betId)) {
+				Map<String,Object>current_rooms_of_betId = GlobalFunctions.DeserializeJson(all_rooms.get(betId));
+				
+				for(String roomId : current_rooms_of_betId.keySet()) { // here we are looking for waiting rooms so we can join it accordingly
+					Map<String,Object> current_room = GlobalFunctions.DeserializeJson(current_rooms_of_betId.get(roomId).toString());
+					if(current_room.containsKey("state") && current_room.get("state") == "waiting") { // If room is waiting
+						current_room.put("uid2", uid);
+						current_room.put("Amount_Players", "2");
+						current_room.put("state", "Created");
+						Map<String,String> _matchingData = new LinkedHashMap<String,String>();
+						_ret.put("ConnectionUrl", current_room.get("ConnectionUrl")); // We need the right websocket so we can know exactly to which server we are referring to
+						_matchingData.put("roomID", current_room.get("roomID").toString());
+						RedisApi.SetUserMatchData(uid, _matchingData);
+						return _ret;
+					}
 				}
+				// here we do have a betID but we do not have any room to enter so we need to create it ourselves
+				prepareRoom(betId,all_rooms, uid, _ws);
+
 			}
-			//if player did not find an opponent we must create the room
-			if(!found_opponent) {
-				String status = "waiting";
-				Map<String,String> searchDataRoom = new LinkedHashMap<String,String>();
-				searchDataRoom.put("status", status);
-				searchDataRoom.put("Uid1", _Data.get("UserId").toString());
-				RedisApi.addRooms((roomID++).toString(), status);
-				return roomID.toString();
+			else {
+				// here it means that we didnt find the corresponding betID thus we need to create the bedID and a new room in it
+				prepareRoom(betId,all_rooms, uid, _ws);
 			}
+			/*
+			 * else { Map<String,String> _searchData = new LinkedHashMap<String, String>();
+			 * _searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
+			 * RedisApi.SetSearchData(_Data.get("UserId").toString(), _searchData); }
+			 */	
 		}
-		return roomID.toString();
-		/*
-		 * else { Map<String,String> _searchData = new LinkedHashMap<String, String>();
-		 * _searchData.put("RequestedTime", GlobalFunctions.GetUTCDate());
-		 * RedisApi.SetSearchData(_Data.get("UserId").toString(), _searchData); }
-		 */
+		return _ret;
+	}
+	private void prepareRoom(String betId,Map<String,String> all_rooms, String uid , String _ws) {
+		// TODO Auto-generated method stub
+		Integer _roomid = roomID++;
+		Map<String,String> _roomData = new LinkedHashMap<String,String>();
+		_roomData.put("state", "Creating");
+		_roomData.put("ConnectionUrl", _ws);
+		_roomData.put("Amount_Players", "1");
+		_roomData.put("uid1", uid);
+		_roomData.put("roomID", _roomid.toString());
+		String _parsedRoomData = GlobalFunctions.SerializeToJson(_roomData);
+		String current_rooms_of_betID = all_rooms.get(betId);
+		// If there are no rooms in this bet ID that means we need to add it
+//		if(current_rooms_of_betID == null) {
+////			Map<String,String> curr_rooms_map = new LinkedHashMap<String,String>();
+////			curr_rooms_map.put(_roomid.toString(), _parsedRoomData);
+////			String current_rooms = GlobalFunctions.SerializeToJson(curr_rooms_map);
+////			all_rooms.put(betId, current_rooms);
+//			Map<String,String> curr_rooms_betID_map = new LinkedHashMap<String,String>();
+//			curr_rooms_betID_map.put(_roomid.toString(), _parsedRoomData);
+//			current_rooms_of_betID = GlobalFunctions.SerializeToJson(curr_rooms_betID_map);
+//			RedisApi.SetRoomData(uid, _roomData);
+//		}
+//		else {
+//			current_rooms_of_betID
+//		}
+		Map<String,String> _matchingData = new LinkedHashMap<String,String>();
+		_matchingData.put("roomId", _roomid.toString());
+		RedisApi.SetRoomData(_roomid.toString(), _roomData);
+		RedisApi.addRooms(betId, _parsedRoomData);
+		RedisApi.SetUserMatchData(uid, _matchingData);
+		
 	}
 }
