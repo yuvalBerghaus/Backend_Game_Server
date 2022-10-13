@@ -42,9 +42,8 @@ public class searchingController extends HttpServlet {
 				String _userId = _parsedJson.get("UserId").toString();
 				if(_userId.equals("") == false)
 				{
-					String matchID = MatchingServ.getInstance().match_room(_parsedJson);
+					_ret = MatchingServ.getInstance().match_room(_parsedJson);
 					_ret.put("ConnectionUrl",_ws);
-					_ret.put("match_id", matchID);
 					_ret.put("IsSearching", true);
 				}
 				else
